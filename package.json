@@ -1,0 +1,23 @@
+{
+  "name": "elis-connector-example-js",
+  "version": "1.0.0",
+  "description": "Simple validating connector example",
+  "main": "connector.js",
+  "scripts": {
+    "test": "mocha --exit",
+    "eslint": "eslint connector.js 'test/**.js'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "eslint": "^5.10.0",
+    "mocha": "^5.2.0"
+  }
+}
