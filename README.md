@@ -1,6 +1,4 @@
-# elis-connector-example-js
-
-Example Elis connector to check sum of tax values equals total tax value.
+Example [Elis](https://rossum.ai/data-capture#elis_page) connector that implements a simple check. It parses annotation structure and extracts field values (tax values and a total tax). Then it checks that values match and returns a warning message if not.
 
 It expects following schema structure:
 
