@@ -1,5 +1,5 @@
 {
-  "name": "elis-connector-example-js",
+  "name": "check-sum-connector-nodejs",
   "version": "1.0.0",
   "description": "Simple validating connector example",
   "main": "connector.js",
