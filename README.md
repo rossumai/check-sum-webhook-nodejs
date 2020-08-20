@@ -15,24 +15,8 @@ amounts_section
 ```
 
 ### Connector setup
-You can use [elisctl](https://github.com/rossumai/elisctl) tool to configure an Elis queue to use the connector.
+Check out our [Developer Hub connector guide](https://developers.rossum.ai/docs/your-first-connector) on how to set up
+an example connector for the first time. You can also [configure the connector using our API](https://api.elis.rossum.ai/docs/#create-a-new-connector)
+directly.
 
-Create the connector first:
-
-```
-	 elisctl connector create "NodeJS Example Connector" --service-url http://hostname:5000 --auth-token wuNg0OenyaeK4eenOovi7aiF
-```
-
-In the response, you will receive the ID of the connector. Next, choose an existing queue and deploy the connector to it:
-
-```
-	 elisctl queue change 29582 --connector-id 1506
-```
-
-Or create a new queue and attach the connector to it:
-
-```
-	 elisctl queue create "NodeJS Connector Queue" --connector-id 1506 -s schema.json
-```
-
-You can also [configure the connector using our API](https://api.elis.rossum.ai/docs/#create-a-new-connector) directly.
+To use this connector for production, use it via HTTPS and enforce the authentication token.
