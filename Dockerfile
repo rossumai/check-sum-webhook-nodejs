@@ -1,19 +1,19 @@
-FROM node:9 AS test
+FROM node:14.10.1-stretch AS test
 
 RUN mkdir /app
 WORKDIR /app
 COPY package.json package-lock.json /app/
 RUN npm install
 COPY .eslintrc.js /app/
-COPY connector.js /app/
+COPY webhook.js /app/
 COPY test /app/test
 
-FROM node:9 AS build
+FROM node:14.10.1-stretch AS build
 RUN mkdir /app
 WORKDIR /app
 COPY package.json package-lock.json /app/
 RUN npm install --only=prod
-COPY connector.js /app/
+COPY webhook.js /app/
 
-EXPOSE 8000
-CMD ["node", "connector"]
+EXPOSE 5000
+CMD ["node", "webhook"]

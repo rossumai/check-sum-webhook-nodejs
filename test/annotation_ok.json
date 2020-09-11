@@ -1,77 +1,94 @@
 {
-   "meta": {},
-   "content": [
-      {
-         "schema_id": "invoice_info_section",
-         "children": [
-            {
-               "schema_id": "invoice_type"
-            }, {
-               "schema_id": "invoice_id"
-            }
-         ]
-      }, {
-         "schema_id": "amounts_section",
-         "children": [
-            {
-               "schema_id": "amount_total"
-            }, {
-               "schema_id": "amount_total_tax",
-               "value": "123.12",
-               "id": 123
-            }, {
-               "schema_id": "amount_total_base"
-            }, {
-               "schema_id": "currency"
-            }, {
-               "schema_id": "centre"
-            }, {
-               "schema_id": "vat_details",
-               "children": [
-                  {
-                     "schema_id": "vat_detail",
-                     "children": [
-                        {
-                           "schema_id": "vat_detail_rate"
-                        }, {
-                           "schema_id": "vat_detail_base"
-                        }, {
-                           "schema_id": "vat_detail_tax",
-                           "value": "120.12"
-                        }, {
-                           "schema_id": "vat_code"
-                        }, {
-                           "schema_id": "gl_code"
-                        }
-                     ]
-                  },
-                  {
-                     "schema_id": "vat_detail",
-                     "children": [
-                        {
-                           "schema_id": "vat_detail_rate"
-                        }, {
-                           "schema_id": "vat_detail_base"
-                        }, {
-                           "schema_id": "vat_detail_tax",
-                           "value": "3.00"
-                        }, {
-                           "schema_id": "vat_code"
-                        }, {
-                           "schema_id": "gl_code"
-                        }
-                     ]
-                  }
-               ]
-            }
-         ]
-      }, {
-         "schema_id": "vendor_section",
-         "children": [
-            {
-               "schema_id": "sender_name"
-            }
-         ]
-      }
-   ]
+   "annotation": {
+      "content": [
+         {
+            "schema_id": "invoice_info_section",
+            "children": [
+               {
+                  "schema_id": "invoice_type"
+               },
+               {
+                  "schema_id": "invoice_id"
+               }
+            ]
+         },
+         {
+            "schema_id": "amounts_section",
+            "children": [
+               {
+                  "schema_id": "amount_total"
+               },
+               {
+                  "schema_id": "amount_total_tax",
+                  "value": "123.12",
+                  "id": 123
+               },
+               {
+                  "schema_id": "amount_total_base"
+               },
+               {
+                  "schema_id": "currency"
+               },
+               {
+                  "schema_id": "centre"
+               },
+               {
+                  "schema_id": "vat_details",
+                  "children": [
+                     {
+                        "schema_id": "vat_detail",
+                        "children": [
+                           {
+                              "schema_id": "vat_detail_rate"
+                           },
+                           {
+                              "schema_id": "vat_detail_base"
+                           },
+                           {
+                              "schema_id": "vat_detail_tax",
+                              "value": "120.12"
+                           },
+                           {
+                              "schema_id": "vat_code"
+                           },
+                           {
+                              "schema_id": "gl_code"
+                           }
+                        ]
+                     },
+                     {
+                        "schema_id": "vat_detail",
+                        "children": [
+                           {
+                              "schema_id": "vat_detail_rate"
+                           },
+                           {
+                              "schema_id": "vat_detail_base"
+                           },
+                           {
+                              "schema_id": "vat_detail_tax",
+                              "value": "3.00"
+                           },
+                           {
+                              "schema_id": "vat_code"
+                           },
+                           {
+                              "schema_id": "gl_code"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "schema_id": "vendor_section",
+            "children": [
+               {
+                  "schema_id": "sender_name"
+               }
+            ]
+         }
+      ]
+   }
 }

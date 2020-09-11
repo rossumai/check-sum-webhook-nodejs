@@ -1,23 +1,24 @@
 {
-  "name": "check-sum-connector-nodejs",
+  "name": "check-sum-webhook-nodejs",
   "version": "1.0.0",
-  "description": "Simple validating connector example",
-  "main": "connector.js",
+  "description": "Simple validating webhook example",
+  "main": "webhook.js",
   "scripts": {
     "test": "mocha --exit",
-    "eslint": "eslint connector.js 'test/**.js'"
+    "eslint": "eslint webhook.js 'test/**.js'"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "morgan": "^1.9.1"
+    "body-parser": "^1.19.0",
+    "buffer-equal-constant-time": "^1.0.1",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "chai-http": "^4.2.0",
-    "eslint": "^5.10.0",
+    "chai-http": "^4.3.0",
+    "eslint": "^5.16.0",
     "mocha": "^5.2.0"
   }
 }
