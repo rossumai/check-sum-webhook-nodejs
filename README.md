@@ -1,20 +1,20 @@
 # Example NodeJS Rossum Webhook
 Example [Rossum](https://rossum.ai) webhook that implements a simple check.
-It parses annotation structure and extracts field values (tax values and a total tax).
+It parses annotation structure and extracts field values (amount_total_tax and tax_detail_tax).
 Then it checks that values match and returns a warning message if not.
 
-It expects following schema structure:
+An example annotation also used for testing:
 
 ```yaml
-amounts_section
-  ...
-  amount_total_tax
-  ...
-  vat_details
-    ...
-    vat_detail_tax
-    ...
+test/data/sample-data.json
 ```
+
+### Start
+Start writing your code by cloning this project and adjusting the
+```yaml
+webhook.js
+```
+Use the supporting functions available in the utils directory.
 
 ### Webhook setup
 You can find more information about webhooks at our [Developer Hub](https://developers.rossum.ai/docs/how-to-use-webhooks).
