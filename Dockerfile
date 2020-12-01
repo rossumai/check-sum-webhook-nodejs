@@ -6,6 +6,7 @@ COPY package.json package-lock.json /app/
 RUN npm install
 COPY .eslintrc.js /app/
 COPY webhook.js /app/
+COPY utils/ /app/utils/
 COPY test /app/test
 
 FROM node:14.10.1-stretch AS build
