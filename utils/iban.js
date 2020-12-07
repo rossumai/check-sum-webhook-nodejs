@@ -2,9 +2,7 @@
 // The algorithm taken from:
 // https://en.wikipedia.org/wiki/International_Bank_Account_Number#Modulo_operation_on_IBAN
 
-const strip = iban => {
-    return iban.toUpperCase().replace(/\s+/g, '');
-};
+const strip = iban => iban.toUpperCase().replace(/\s+/g, '');
 
 const sanityChecksPass = iban => {
     return ( iban
