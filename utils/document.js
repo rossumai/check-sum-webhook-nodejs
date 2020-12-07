@@ -21,10 +21,9 @@ const findBySchemaId = (content, schemaId) =>
 
 const findBySchemaIdBulk = (content, schemaIds) =>
     schemaIds.reduce(
-        (results, schemaId) => {
-            results[schemaId] = findBySchemaId( content, schemaId );
-            return results;
-        },
+        (results, schemaId) => ({
+            ...results,
+            [schemaId]: findBySchemaId(content, schemaId) }),
         {
             valueOf: function (schemaId) { return schemaId in this ? this[schemaId][0].content.value : undefined; },
             idOf: function (schemaId) { return schemaId in this ? this[schemaId][0].id : undefined; }

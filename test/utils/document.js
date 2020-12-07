@@ -1,16 +1,16 @@
 const chai = require('chai');
 const assertArrays = require('chai-arrays');
-const fs = require('fs');
-const doc = require('../../utils/document');
-
-const createMessage = doc.createMessage;
-const findBySchemaId = doc.findBySchemaId;
-const findBySchemaIdBulk = doc.findBySchemaIdBulk;
-const verifyInBulk = doc.verifyInBulk;
-const findInRir = doc.findInRir;
-
-const expect = chai.expect;
 chai.use(assertArrays);
+const {expect} = require('chai');
+const fs = require('fs');
+
+const {
+    createMessage,
+    findBySchemaId,
+    findBySchemaIdBulk,
+    verifyInBulk,
+    findInRir
+} = require('../../utils/document');
 
 describe('document library', function () {
 

@@ -5,6 +5,7 @@ const doc = require('./utils/document');
 
 const app = express();
 const port = parseInt(process.env.PORT, 10) || 3000;
+const our_bank_acc = process.env.BANK_ACC || '150342342340';
 
 const trycatch = fn => data => {
     try { return fn(data); } catch (e) { return doc.createMessage('error', 'Something went wrong ' + e); }
@@ -13,8 +14,8 @@ const trycatch = fn => data => {
 const floatValue = v => parseFloat( v.content.normalized_value );
 
 const validate = trycatch(payload => {
-    const content = payload.annotation.content;
-    const schemaIds = [ 'amount_total_tax', 'tax_detail_tax' ];
+    const { content } = payload.annotation;
+    const schemaIds = [ 'amount_total_tax', 'tax_detail_tax', 'account_num' ];
     const data = doc.findBySchemaIdBulk( content, schemaIds );
 
     const amount = data.amount_total_tax
@@ -26,8 +27,13 @@ const validate = trycatch(payload => {
         .reduce( (res, dp) => res + dp, 0 );
 
     const messages = [];
-    if( amount !== detailSum && data.amount_total_tax.length > 0 ) {
-        messages.push(doc.createMessage( 'warning', 'Tax checksum failed', data.amount_total_tax[0].id ));
+    if( amount !== detailSum ) {
+        messages.push(doc.createMessage( 'warning', 'Tax checksum failed', data.idOf('amount_total_tax')));
+    }
+
+    const accountNum = data.valueOf('account_num');
+    if (accountNum !== our_bank_acc) {
+        messages.push(doc.createMessage('error', 'Bank account mismatch', data.idOf('account_num')));
     }
 
     return messages;
