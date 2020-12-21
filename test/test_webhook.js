@@ -17,6 +17,7 @@ describe('/check_vat_amounts', () => {
     const json = JSON.parse(data);
     const jsonError = JSON.parse(data);
     jsonError.annotation.content[2].children[6].children[0].children[2].content.normalized_value = '242';
+    jsonError.annotation.content[1].children[0].content.value = 'wrong account';
 
     it('it should not return messages when tax rows match', (done) => {
         chai.request(server)
@@ -32,7 +33,7 @@ describe('/check_vat_amounts', () => {
             });
     });
 
-    it('it should return messages when tax rows don\'t match', (done) => {
+    it('it should return messages when tax rows don\'t match and the account number is wrong', (done) => {
         chai.request(server)
             .post('/check_vat_amounts')
             .type('json')
@@ -41,7 +42,7 @@ describe('/check_vat_amounts', () => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
                 res.body.should.have.property('messages');
-                res.body.messages.should.be.be.ofSize(1);
+                res.body.messages.should.be.be.ofSize(2);
                 done();
             });
     });

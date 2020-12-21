@@ -19,46 +19,26 @@ const findBySchemaId = (content, schemaId) =>
 // @param {string} schemaIds - an array of field's IDs as defined in the extraction schema(see https://api.elis.rossum.ai/docs/#document-schema)
 // @returns {Object} - key is the schema id, value is the list of datapoints matching the schema ID
 
-const findBySchemaIdBulk = (content, schemaIds) =>
-    schemaIds.reduce(
+const extract = (content, schemaIds) => {
+    const data = schemaIds.reduce(
         (results, schemaId) => ({
             ...results,
-            [schemaId]: findBySchemaId(content, schemaId) }),
-        {
-            valueOf: function (schemaId) { return schemaId in this ? this[schemaId][0].content.value : undefined; },
-            idOf: function (schemaId) { return schemaId in this ? this[schemaId][0].id : undefined; }
-        }
+            [schemaId]: findBySchemaId(content, schemaId) }), {}
     );
 
-// Return an array with warnings for all schemaIds in the bulk object that have an empty annotation
-// @param {Object} bulk - the output of the findBySchemaIdBulk function
-// @param {string} schemaIds - an array of field's IDs as defined in the extraction schema(see https://api.elis.rossum.ai/docs/#document-schema)
-// @param {string} errorMessage - the returned error message, string ${SCHEMA_ID} is replaced by the schema id (label is not available in the annotation object)
-// @returns {Array} - the list of warning messages matching the schema ID
-
-const verifyInBulk = (bulk, schemaIds, errorMessage) =>
-    schemaIds
-        .filter( schemaId => schemaId in bulk )
-        .filter( schemaId => bulk[schemaId].reduce(
-            (result, data) => result && data.content.value.length === 0,
-            true))
-        .map( schemaId => createMessage('warning',
-            errorMessage.replace(/\${SCHEMA_ID}/g, schemaId),
-            bulk[schemaId][0].id) );
-
-// Return datapoints matching a search term in "rir_text".
-// @param {Object} content - the annotation content tree (see https://api.elis.rossum.ai/docs/#annotation-data)
-// @param {string} searchTerm - the searched term
-// @returns {Array} - the list of datapoints matching the schema ID
-
-const findInRir = (content, searchTerm) =>
-    content.reduce(
-        (results, dp) =>
-            'content' in dp && 'rir_text' in dp.content && dp.content.rir_text === searchTerm ? [...results, dp] :
-                dp.children ? [...results, ...findInRir(dp.children, searchTerm)] :
-                    results,
-        []
-    );
+    return {
+        values: schemaId => schemaId in data ? data[schemaId].map( a => a.content ) : undefined,
+        firstValue: schemaId => schemaId in data ? data[schemaId][0].content.value : undefined,
+        idOf: schemaId => schemaId in data ? data[schemaId][0].id : undefined,
+        verify: (schemaIds, errorMessage) =>
+            schemaIds
+                .filter( schemaId => schemaId in data )
+                .filter( schemaId => data[schemaId].reduce(
+                    (result, d) => result && d.content.value.length === 0,
+                    true))
+                .map( schemaId => createMessage('error', errorMessage, data[schemaId][0].id))
+    };
+};
 
 // Create a message which will be shown to the user
 // @param {number} datapointId - the id of the datapoint where the message will appear (null for "global" messages).
@@ -89,8 +69,6 @@ const createReplaceOperation = (datapoint, newValue) => ({
 
 module.exports = {
     findBySchemaId: findBySchemaId,
-    findBySchemaIdBulk: findBySchemaIdBulk,
-    verifyInBulk: verifyInBulk,
-    findInRir: findInRir,
+    extract: extract,
     createMessage: createMessage,
     createReplaceOperation: createReplaceOperation };

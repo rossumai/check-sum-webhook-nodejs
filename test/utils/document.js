@@ -7,9 +7,7 @@ const fs = require('fs');
 const {
     createMessage,
     findBySchemaId,
-    findBySchemaIdBulk,
-    verifyInBulk,
-    findInRir
+    extract
 } = require('../../utils/document');
 
 describe('document library', function () {
@@ -42,7 +40,7 @@ describe('document library', function () {
         expect(json).to.not.be.undefined;
     });
 
-    const content = json.annotation.content;
+    const {content} = json.annotation;
     it('sample-data.json should have content',function () {
         expect(content).to.not.be.undefined;
     });
@@ -51,30 +49,25 @@ describe('document library', function () {
         expect(findBySchemaId(content, 'item_amount_base' )).to.be.ofSize(3);
     });
 
-    const bulkFind = findBySchemaIdBulk(content, ['item_amount_base'] );
+    const bulkFind = extract(content, ['item_amount_base'] );
     it('sample-data.json retrieved in bulk should contain item_amount_total fields 3x',function () {
-        expect(bulkFind['item_amount_base']).to.be.ofSize(3);
+        expect(bulkFind.values('item_amount_base')).to.be.ofSize(3);
     });
 
-    it('bulk should provide valueOf method',function () {
-        expect(bulkFind.valueOf('item_amount_base')).to.be.equal('645.53');
+    it('bulk should provide firstValue method',function () {
+        expect(bulkFind.firstValue('item_amount_base')).to.be.equal('645.53');
     });
 
     //////////  verify in bulk
-    const bulk = findBySchemaIdBulk(content, ['item_amount_base', 'amount_rounding'] );
-    const verification = verifyInBulk(bulk, ['item_amount_base', 'amount_rounding', 'missing_field'], 'Err: ${SCHEMA_ID}' );
+    const bulk = extract(content, ['item_amount_base', 'amount_rounding'] );
+    const verification = bulk.verify(['item_amount_base', 'amount_rounding', 'missing_field'], 'Err' );
 
-    it('schemaId check found one missing field',function () {
+    it('schemaId check found one empty field',function () {
         expect(verification).to.be.ofSize(1);
     });
 
     it('schemaId check fills the error message',function () {
-        expect(verification[0].content).to.be.equal('Err: amount_rounding');
+        expect(verification[0].content).to.be.equal('Err');
         expect(verification[0].id).to.be.equal(332573403);
-    });
-
-    //////////  findInRir
-    it('sample-data.json should contain string "DNBANOKK" once',function () {
-        expect(findInRir(content, 'DNBANOKK' )).to.be.ofSize(1);
     });
 });

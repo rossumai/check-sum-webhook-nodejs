@@ -11,18 +11,18 @@ const trycatch = fn => data => {
     try { return fn(data); } catch (e) { return doc.createMessage('error', 'Something went wrong ' + e); }
 };
 
-const floatValue = v => parseFloat( v.content.normalized_value );
+const floatValue = v => parseFloat( v.normalized_value );
 
 const validate = trycatch(payload => {
     const { content } = payload.annotation;
     const schemaIds = [ 'amount_total_tax', 'tax_detail_tax', 'account_num' ];
-    const data = doc.findBySchemaIdBulk( content, schemaIds );
+    const data = doc.extract( content, schemaIds );
 
-    const amount = data.amount_total_tax
+    const amount = data.values('amount_total_tax')
         .map( floatValue )
         .reduce( (res, dp) => res + dp, 0 );
 
-    const detailSum = data.tax_detail_tax
+    const detailSum = data.values('tax_detail_tax')
         .map( floatValue )
         .reduce( (res, dp) => res + dp, 0 );
 
@@ -31,9 +31,14 @@ const validate = trycatch(payload => {
         messages.push(doc.createMessage( 'warning', 'Tax checksum failed', data.idOf('amount_total_tax')));
     }
 
-    const accountNum = data.valueOf('account_num');
-    if (accountNum !== our_bank_acc) {
-        messages.push(doc.createMessage('error', 'Bank account mismatch', data.idOf('account_num')));
+    const accCheck = data.verify(['account_num'], 'Missing');
+    if( accCheck.length > 0 ) {
+        messages.push(accCheck);
+    } else {
+        const accountNum = data.firstValue('account_num');
+        if (accountNum !== our_bank_acc) {
+            messages.push(doc.createMessage('error', 'Bank account mismatch', data.idOf('account_num')));
+        }
     }
 
     return messages;
@@ -47,7 +52,7 @@ app.post('/check_vat_amounts', (request, response) => {
 
 app.listen(port, () => {
     // eslint-disable-next-line no-console
-    console.log(`> Ready on http://localhost:${port}`);
+    console.log(`> Ready on port: ${port}`);
 });
 
 module.exports = app;
