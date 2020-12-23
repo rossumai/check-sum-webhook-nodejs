@@ -30,6 +30,7 @@ const extract = (content, schemaIds) => {
         values: schemaId => schemaId in data ? data[schemaId].map( a => a.content ) : undefined,
         firstValue: schemaId => schemaId in data ? data[schemaId][0].content.value : undefined,
         idOf: schemaId => schemaId in data ? data[schemaId][0].id : undefined,
+        replaceOp: (schemaId, newValue) => schemaId in data ? createReplaceOperation(data[schemaId][0], newValue) : undefined,
         verify: (schemaIds, errorMessage) =>
             schemaIds
                 .filter( schemaId => schemaId in data )
