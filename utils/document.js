@@ -14,10 +14,10 @@ const findBySchemaId = (content, schemaId) =>
         []
     );
 
-// Return datapoints matching an array of schema ids.
+// Return operations running over extracted schema ids.
 // @param {Object} content - the annotation content tree (see https://api.elis.rossum.ai/docs/#annotation-data)
-// @param {string} schemaIds - an array of field's IDs as defined in the extraction schema(see https://api.elis.rossum.ai/docs/#document-schema)
-// @returns {Object} - key is the schema id, value is the list of datapoints matching the schema ID
+// @param {List} schemaIds - an array of field's IDs as defined in the extraction schema(see https://api.elis.rossum.ai/docs/#document-schema)
+// @returns {Object} - operations to extract all values, first value content, datapoint id (for createMessage), wrapped replace operation, and verification of the content
 
 const extract = (content, schemaIds) => {
     const data = schemaIds.reduce(
