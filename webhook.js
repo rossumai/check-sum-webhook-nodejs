@@ -1,62 +1,58 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const crypto = require('crypto');
-const bufferEq = require('buffer-equal-constant-time')
+require('dotenv').config({ path: './.env' });
+const doc = require('./utils/document');
+
 const app = express();
-const port = 8000;
-const tolerance = 0.00001;
-const secretKey = "Your secret key stored in hook.config.secret"  // never store this in code!
+const port = parseInt(process.env.PORT, 10) || 3000;
+const our_bank_acc = process.env.BANK_ACC || '150342342340';
 
-app.use(morgan('combined'));
-app.use(bodyParser.json({verify:function(request,res,buf){request.rawBody=buf}}))
-
-function verifySignature(request) {
-  const retrievedSignature = request.get("X-Elis-Signature").split("=")
-  const bodyString = Buffer.from(request.rawBody)
-  if (retrievedSignature[0] !== "sha1") {
-    return false
-  }
-  const hmac = crypto.createHmac('sha1', secretKey).update(bodyString).digest('hex')
-  return bufferEq(new Buffer.from(hmac), new Buffer.from(retrievedSignature[1]));
+const trycatch = fn => data => {
+    try { return fn(data); } catch (e) { return doc.createMessage('error', 'Something went wrong ' + e); }
 };
 
-const findByPath = (data, [part, ...parts]) => {
-  const found = data.find(({ schema_id }) => (part === schema_id));
-  return (found.children && parts.length) ? findByPath(found.children, parts) : found;
-};
+const floatValue = v => parseFloat( v.normalized_value );
 
-const createErrorMessages = (id, content) => [{ id, type: 'error', content }];
+const validate = trycatch(payload => {
+    const { content } = payload.annotation;
+    const schemaIds = [ 'amount_total_tax', 'tax_detail_tax', 'account_num' ];
+    const data = doc.extract( content, schemaIds );
 
-const trycatch = (fn) => (data) => {
-  try { return fn(data); } catch (e) { return createErrorMessages('all', 'Error parsing annotation'); }
-};
+    const amount = data.values('amount_total_tax')
+        .map( floatValue )
+        .reduce( (res, dp) => res + dp, 0 );
 
-const floatValue = ({ content: { value } }) => parseFloat(value);
+    const detailSum = data.values('tax_detail_tax')
+        .map( floatValue )
+        .reduce( (res, dp) => res + dp, 0 );
 
-function vatSumCheck(vatTotal, vatDetails) {
-  const sum = vatDetails.reduce((s, i) => s + floatValue(findByPath(i.children, ['tax_detail_tax'])), 0);
-  return Math.abs(sum - floatValue(vatTotal)) <= tolerance;
-};
+    const messages = [];
+    if( amount !== detailSum ) {
+        messages.push(doc.createMessage( 'warning', 'Tax checksum failed', data.idOf('amount_total_tax')));
+    }
 
-const validate = trycatch(({ annotation }) => {
-  const vatTotal = findByPath(annotation.content, ['amounts_section', 'amount_total_tax']);
-  const vatDetails = findByPath(annotation.content, ['amounts_section', 'tax_details']);
-  return vatSumCheck(vatTotal, vatDetails.children)
-    ? []
-    : createErrorMessages(vatTotal.id, 'Total VAT amount differs from sum of VAT amounts');
+    const accCheck = data.verify(['account_num'], 'Missing');
+    if( accCheck.length > 0 ) {
+        messages.push(accCheck);
+    } else {
+        const accountNum = data.firstValue('account_num');
+        if (accountNum !== our_bank_acc) {
+            messages.push(doc.createMessage('error', 'Bank account mismatch', data.idOf('account_num')));
+        }
+    }
+
+    return messages;
 });
 
+app.use(bodyParser.json());
 app.post('/check_vat_amounts', (request, response) => {
-  let signatureCheck = verifySignature(request)
-  if (signatureCheck === true) {
-    const messages = validate(request.body);
-    response.json({ messages });
-  } else {
-  throw Error("Unauthorized Request")
-  }
+    const validationResult = validate( request.body );
+    response.json( { messages: validationResult }  );
 });
 
-app.listen(port);
+app.listen(port, () => {
+    // eslint-disable-next-line no-console
+    console.log(`> Ready on port: ${port}`);
+});
 
 module.exports = app;

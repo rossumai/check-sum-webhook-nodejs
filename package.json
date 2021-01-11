@@ -1,24 +1,26 @@
 {
   "name": "check-sum-webhook-nodejs",
-  "version": "1.0.0",
-  "description": "Simple validating webhook example",
+  "version": "1.0.1",
+  "description": "Rossum's webhook template in JavaScript",
   "main": "webhook.js",
   "scripts": {
+    "run": "node webhook.js",
     "test": "mocha --exit",
-    "eslint": "eslint webhook.js 'test/**.js'"
+    "eslint": "eslint webhook.js 'test/**.js' 'utils/**.js'"
   },
-  "author": "",
+  "author": "Rossum",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
     "buffer-equal-constant-time": "^1.0.1",
-    "express": "^4.17.1",
-    "morgan": "^1.10.0"
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-arrays": "^2.2.0",
     "chai-http": "^4.3.0",
     "eslint": "^5.16.0",
-    "mocha": "^5.2.0"
+    "mocha": "^8.2.1"
   }
 }
